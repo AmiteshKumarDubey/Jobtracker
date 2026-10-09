@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Final polish pass: LoginPage/RegisterPage visual upgrades, ProfilePage stats integration, EmptyState improvements, LoadingSpinner polish, and any remaining cross-cutting concerns. Verify the complete build end-to-end. This is the final FEAT — it depends on FEAT-001 through FEAT-003 all being complete.",
+  "status": "pending",
+  "steps": [
+    "Step 1 — Upgrade LoginPage (client/src/pages/LoginPage.jsx). Update auth-card to use the new CSS variables (already updated by FEAT-001 index.css). Add a subtle background pattern to the auth-layout: add an inline style on the auth-layout div with a radial-gradient using --primary-glow. No logic changes. Keep all existing form fields and handlers.",
+
+    "Step 2 — Upgrade RegisterPage (client/src/pages/RegisterPage.jsx). Same visual treatment as LoginPage. Add a password strength hint below the password field: show 'Strong' in --success color if length >= 8, 'Good' in --warning if >= 6, 'Too short' in --danger if < 6. This is purely display, does not affect submit logic.",
+
+    "Step 3 — Upgrade ProfilePage (client/src/pages/ProfilePage.jsx). After the existing profile card, add a stats row: fetch /api/applications/stats and show 4 small inline badges: Total Applications, Interviews, Offers, Rejection Rate. Import api from '../services/api'. Use a simple flex row of small cards. Keep all existing profile data display unchanged.",
+
+    "Step 4 — Upgrade EmptyState (client/src/components/EmptyState.jsx). Add optional 'action' prop: { label: string, onClick: fn }. If provided, render a btn btn-primary button below the message. Keep backward compatibility (no action prop = renders same as before).",
+
+    "Step 5 — Final build verification and cleanup. Run the build. Fix any remaining ESLint errors that block compilation (unused imports, missing keys in lists, etc.). Do NOT suppress ESLint with comments unless absolutely necessary — prefer fixing the actual issue. Ensure all new pages are reachable via their routes. Check that the Toaster in App.jsx uses updated theme colors matching the new design system (bg-card: #1a2236, border: #1f2d45). Update App.jsx Toaster toastOptions to match: background: '#1a2236', color: '#f1f5f9', border: '1px solid #1f2d45'."
+  ],
+  "acceptance_criteria": [
+    "Login and Register pages have the updated visual style with radial gradient background",
+    "Register page shows password strength indicator",
+    "Profile page shows application stats row",
+    "EmptyState accepts and renders optional action button",
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build exits 0 with no errors"
+  ],
+  "verification": [
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

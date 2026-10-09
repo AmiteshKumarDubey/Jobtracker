@@ -1,0 +1,44 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Visual redesign of all existing components + enhanced Dashboard (Phase 1+2) + Kanban view in ApplicationsPage (Phase 3). Depends on FEAT-001 (CSS variables and packages must exist). This FEAT touches every existing component and both core pages. FEAT-003 and FEAT-004 depend on this FEAT completing.",
+  "status": "pending",
+  "steps": [
+    "Step 1 — Redesign Sidebar (client/src/components/Sidebar.jsx). Add Analytics nav item { to: '/analytics', icon: '📈', label: 'Analytics' } between Applications and Profile. Polish the active state to use a left border accent: add inline style borderLeft: '3px solid var(--primary)' when isActive, otherwise '3px solid transparent'. Upgrade the sidebar-logo to include a gradient text effect via style. Add a subtle version label in sidebar-footer. Keep all existing logic (logout, NavLink, onClose) unchanged.",
+
+    "Step 2 — Redesign AppLayout (client/src/layouts/AppLayout.jsx). Add '/analytics' and '/applications/:id' to PAGE_TITLES map. The title for /applications/:id should be 'Application Detail'.",
+
+    "Step 3 — Redesign Navbar (client/src/components/Navbar.jsx). Add a right-side user avatar circle showing the first initial of the logged-in user's name. Import useAuth from '../hooks/useAuth'. Keep hamburger and title on the left. The avatar is a small circle (32px) using --primary background with the user initial in white. No dropdown needed.",
+
+    "Step 4 — Redesign StatCard (client/src/components/StatCard.jsx). Replace the ::before pseudo-element hack (which uses a <style> tag inline) with a proper top-border using borderTop: `3px solid ${color}` on the card div directly via style prop. Add a trend indicator prop (optional, default null) — if provided as a string like '+12%' show it in small text below the value in --success color. Keep label/value/icon props unchanged.",
+
+    "Step 5 — Redesign StatusBadge (client/src/components/StatusBadge.jsx). No logic change needed — the CSS classes are updated by FEAT-001. Just ensure the component still exports correctly.",
+
+    "Step 6 — Create PriorityBadge component (client/src/components/PriorityBadge.jsx). New file. Accepts { priority } prop. Maps High → className 'badge badge-high', Medium → 'badge badge-medium', Low → 'badge badge-low'. Returns a <span> with the priority text.",
+
+    "Step 7 — Redesign ApplicationTable (client/src/components/ApplicationTable.jsx). Add a Priority column between Status and Location. Import PriorityBadge. Add a 'Detail' link column (last column before Actions) that links to /applications/${app._id} using react-router-dom Link. The detail link renders as a small text link '→ View'. Import { Link } from 'react-router-dom'. Keep all existing props and logic (onEdit, onDelete, showActions). Add priority badge display: <PriorityBadge priority={app.priority || 'Medium'} />.",
+
+    "Step 8 — Redesign ApplicationForm (client/src/components/ApplicationForm.jsx). Add 'priority' field to DEFAULT_FORM (default 'Medium'). Add 'followUpDate' field to DEFAULT_FORM (default ''). In the useEffect that populates from application prop, add: priority: application.priority || 'Medium', followUpDate: application.followUpDate ? new Date(application.followUpDate).toISOString().split('T')[0] : ''. Add a Priority select row (High/Medium/Low) next to the Status select in the 2-column grid. Add a Follow-up Date input (type=date) below the Location field. In handleSubmit, include priority and followUpDate in the payload (delete followUpDate if empty string). Keep all existing validation and submit logic.",
+
+    "Step 9 — Redesign DashboardPage (client/src/pages/DashboardPage.jsx). Full redesign. Structure: (A) Greeting header that shows 'Good morning/afternoon/evening, {user.name}!' based on current hour — import useAuth. (B) 5 stat cards row (same STAT_CONFIG but use updated StatCard). (C) Two-panel row: left panel 'Needs Attention' (follow-ups due today/overdue from followUpDate field — fetch from /api/applications and filter client-side where followUpDate <= today), right panel 'Upcoming Interviews' (applications with status === 'Interview' sorted by interviewDate, show next 3). (D) Recent Applications section using ApplicationTable with showActions=false showing last 5. (E) Quick 'Add Application' CTA card if total === 0 (empty state). Import useAuth. Use existing api.js for all calls. Follow-ups panel: from the full applications list, filter where followUpDate exists AND new Date(followUpDate) <= today, show as a small list with company+role+date. Interviews panel: filter status==='Interview', show company+role+interviewDate (formatted). If no items in either panel, show a small empty message. Keep all existing stats fetch logic.",
+
+    "Step 10 — Redesign ApplicationsPage (client/src/pages/ApplicationsPage.jsx). Add Kanban view toggle. Add state: const [viewMode, setViewMode] = useState('list'). Add a toggle button group in the page-header (right side, next to Add Application button): two buttons 'List' and 'Kanban' that set viewMode. When viewMode === 'list', render existing filters + ApplicationTable (unchanged). When viewMode === 'kanban', render KanbanBoard component (created in Step 11). Pass applications, onEdit, onDelete, onStatusChange (new handler) to KanbanBoard. Add onStatusChange handler: async function that calls api.put(`/api/applications/${id}`, { status: newStatus }) and updates local state. Keep all existing state/fetch/search/filter logic — search and status filter only apply in list view (hide filters bar in kanban mode).",
+
+    "Step 11 — Create KanbanBoard component (client/src/components/KanbanBoard.jsx). Uses @dnd-kit/core and @dnd-kit/sortable. Import { DndContext, DragOverlay, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'. Import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'. Import { CSS } from '@dnd-kit/utilities'. Build: 4 columns (Applied, Interview, Offer, Rejected) displayed as flex row. Each column has a header with StatusBadge and count, and a scrollable list of KanbanCard subcomponents. KanbanCard (defined in same file or separate): shows company (bold), role, PriorityBadge, formatted appliedDate, an Edit button (calls onEdit) and a Delete button (calls onDelete). DnD: onDragEnd calls onStatusChange(activeId, targetColumnStatus). Handle the case where @dnd-kit may have peer dep warnings gracefully — if any import fails the build, fall back to removing DnD and using a 'Move to:' dropdown on each card that calls onStatusChange directly (no drag). IMPORTANT BUILD SAFETY: wrap all @dnd-kit imports in a try or use conditional — if there are any TypeScript/ESLint issues, simplify to static Kanban with Move dropdowns only. The static fallback (no @dnd-kit at all, just a Move select) is preferred over any build failure. Decision: implement static Kanban with Move dropdowns as the primary approach (not a fallback) since @dnd-kit with React 19 + react-scripts 5 has known peer dep issues. Each card has a small <select> showing current status; onChange calls onStatusChange(app._id, newStatus)."
+  ],
+  "acceptance_criteria": [
+    "Sidebar shows Analytics nav item",
+    "DashboardPage shows greeting with user name, 5 stat cards, follow-ups panel, interviews panel, recent apps",
+    "ApplicationsPage has List/Kanban toggle buttons",
+    "Kanban view shows 4 columns with cards grouped by status",
+    "KanbanBoard does NOT use @dnd-kit imports if they cause build errors (use static Move dropdown instead)",
+    "ApplicationForm has priority select and followUpDate fields",
+    "ApplicationTable has Priority column and View detail link",
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build exits 0"
+  ],
+  "verification": [
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

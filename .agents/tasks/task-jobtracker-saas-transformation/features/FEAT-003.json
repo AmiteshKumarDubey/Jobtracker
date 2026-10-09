@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Application Detail page (Phase 4) and Analytics page (Phase 5). Two new pages and their routes. Depends on FEAT-001 (CSS classes) and FEAT-002 (Sidebar has Analytics link, AppLayout has new routes). FEAT-004 is independent of FEAT-003 and may be implemented in parallel in theory, but is sequenced after for safety.",
+  "status": "pending",
+  "steps": [
+    "Step 1 — Add routes to App.jsx. Import ApplicationDetailPage from './pages/ApplicationDetailPage' and AnalyticsPage from './pages/AnalyticsPage'. Add two new ProtectedRoute entries inside the Routes block: route path='/applications/:id' wrapping AppLayout + ApplicationDetailPage, and route path='/analytics' wrapping AppLayout + AnalyticsPage. Place the /applications/:id route BEFORE the /applications route to ensure correct matching. Keep all existing routes unchanged.",
+
+    "Step 2 — Create ApplicationDetailPage (client/src/pages/ApplicationDetailPage.jsx). Route: /applications/:id. Behavior: (A) Extract id with useParams(). (B) Fetch application via api.get(`/api/applications/${id}`) on mount. Show LoadingSpinner during fetch. On 404/error show an error card with a back link. (C) Layout: page-header with back button (Link to '/applications' styled as btn btn-ghost btn-sm), application company + role as title, StatusBadge + PriorityBadge inline. (D) Two-column detail-grid (defined in CSS by FEAT-001 as `display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; @media(max-width:768px) 1fr`). Left column card: Company, Role, Location, Applied Date (formatted), Job Link (external link if exists), Notes (in a textarea-like pre block). Right column: three stacked cards. Card 1 Follow-up: shows followUpDate (formatted) or 'No follow-up set'. Shows overdue warning if followUpDate < today. Card 2 Interview Prep (only visible when status === 'Interview'): shows interviewDate, interviewNotes, interviewOutcome. Shows preparationChecklist as interactive checkboxes. Checking a box calls api.put with updated preparationChecklist array and updates local state. Card 3 Activity Timeline: shows createdAt ('Applied'), any status changes implied by current status (simplified — just show the appliedDate and any interviewDate as timeline nodes). Timeline uses .timeline and .timeline-item CSS classes. (E) Edit button in page-header opens ApplicationForm modal in edit mode (reuse existing ApplicationForm, pass application prop and onSaved that updates local state and closes modal). (F) Delete button in page-header calls api.delete and navigate('/applications') on success.",
+
+    "Step 3 — Create AnalyticsPage (client/src/pages/AnalyticsPage.jsx). Route: /analytics. Fetch all applications via api.get('/api/applications') and stats via api.get('/api/applications/stats') on mount. Show LoadingSpinner. Use recharts. IMPORTANT recharts import style for CRA: use named imports from 'recharts' — e.g. import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, CartesianGrid, Legend } from 'recharts'. DO NOT use default imports from recharts (they don't exist). (A) Page header: 'Analytics' title + subtitle showing total count. (B) analytics-grid layout (CSS class): 2-column grid on desktop, 1 column mobile. (C) Section 1 — Application Funnel (full width): BarChart with data [{name:'Applied',value:N},{name:'Interview',value:N},{name:'Offer',value:N},{name:'Rejected',value:N}]. Use colors matching status: #3b82f6, #f59e0b, #10b981, #ef4444. Bar fill is an array by index. ResponsiveContainer width='100%' height={280}. (D) Section 2 — Status Distribution (half width): PieChart with Pie, Cell per status. Legend below. (E) Section 3 — Applications Over Time (full width): AreaChart. Group applications by week (use date-fns format(date, 'MMM d') for the week of appliedDate). X-axis shows week labels, Y-axis shows count. Area fill --primary with opacity 0.2, stroke --primary. (F) Section 4 — Conversion Rates (half width): 3 small stat cards: Interview Rate (Interview+Offer / total * 100)%, Offer Rate (Offer / total * 100)%, Rejection Rate (Rejected / total * 100)%. (G) Section 5 — Priority Breakdown (half width): BarChart horizontal with High/Medium/Low counts, computed from applications array client-side by counting app.priority values."
+  ],
+  "acceptance_criteria": [
+    "Navigating to /analytics renders the Analytics page without errors",
+    "Navigating to /applications/:id with a valid id renders the detail page",
+    "recharts BarChart and PieChart render without 'Cannot read properties of undefined' errors",
+    "ApplicationDetailPage shows preparationChecklist checkboxes when status is Interview",
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build exits 0"
+  ],
+  "verification": [
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

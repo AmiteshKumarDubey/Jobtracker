@@ -1,0 +1,23 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Foundation: install new npm packages, extend the backend Application model with optional fields (priority, followUpDate, interviewDate, interviewNotes, interviewOutcome, preparationChecklist), and completely rewrite src/index.css with the refined dark SaaS design system. This FEAT produces the CSS foundation and data schema that all subsequent FEATs depend on. FEAT-002 through FEAT-004 depend on this FEAT completing first.",
+  "status": "completed",
+  "steps": [
+    "Step 1 — Install packages. In /Users/amiteshkumardubey/Desktop/jobTracker/client run: npm install --save recharts@2.12.7 @dnd-kit/core@6.1.0 @dnd-kit/sortable@8.0.0 @dnd-kit/utilities@3.2.2. Pin these exact versions to avoid peer-dep conflicts with react-scripts 5 / React 19.",
+    "Step 2 — Extend backend model. In server/models/Application.js add 6 optional fields inside applicationSchema after the existing 'notes' field: priority (String, enum ['High','Medium','Low'], default 'Medium'), followUpDate (Date, optional), interviewDate (Date, optional), interviewNotes (String, trim, maxlength 2000, optional), interviewOutcome (String, enum ['Pending','Passed','Failed'], default 'Pending'), preparationChecklist (Array of { text: String, done: Boolean } with default []). All fields are optional so existing documents are unaffected.",
+    "Step 3 — Rewrite client/src/index.css. Replace the file entirely with the new design system. CRITICAL: keep ALL existing class names that components currently reference — do not remove any. Update the :root CSS variables to exactly: --bg: #0a0f1e; --bg-secondary: #111827; --bg-card: #1a2236; --bg-hover: #1e2d47; --border: #1f2d45; --border-light: #2a3d5a; --primary: #6366f1; --primary-dark: #4f46e5; --primary-light: #818cf8; --primary-glow: rgba(99,102,241,0.15); --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6; --purple: #8b5cf6; --text: #f1f5f9; --text-secondary: #94a3b8; --text-muted: #64748b; --radius-sm: 6px; --radius: 10px; --radius-lg: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.5); --shadow-lg: 0 8px 48px rgba(0,0,0,0.6); --sidebar-width: 260px; --transition: 0.2s ease. Add @import url for Google Fonts Inter (weights 400,500,600,700,800) at the very top. Add new utility classes that later FEATs will reference: .badge-high (amber), .badge-medium (blue), .badge-low (slate), .kanban-board, .kanban-col, .kanban-card, .detail-grid, .timeline, .timeline-item, .analytics-grid, .funnel-bar. Keep all existing .badge-applied/.badge-interview/.badge-offer/.badge-rejected classes. Add .stat-card:hover with subtle box-shadow transition. Update scrollbar to use --bg-secondary. Update auth card to be slightly wider (max-width 440px) and use --bg-card background. Improve .btn-primary to have a subtle box-shadow on hover using --primary-glow. All changes are purely visual — do not remove any functional class."
+  ],
+  "acceptance_criteria": [
+    "npm install exits 0 in client/",
+    "server/models/Application.js contains all 6 new optional fields with correct defaults",
+    "client/src/index.css contains @import for Inter font at top",
+    "client/src/index.css :root block contains all new CSS variables including --bg: #0a0f1e and --primary-glow",
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build exits 0 (no compile errors)"
+  ],
+  "verification": [
+    "cd /Users/amiteshkumardubey/Desktop/jobTracker/client && npm run build"
+  ],
+  "blocked_reason": null,
+  "findings": "recharts@2.12.7 specified in the task is incompatible with the project's React 19. Installed recharts@3.10.1 instead (approved by user) — this version declares React 19 in its peerDependencies. All other packages (@dnd-kit/core@6.1.0, @dnd-kit/sortable@8.0.0, @dnd-kit/utilities@3.2.2) installed as specified. Build passed with exit 0."
+}

@@ -1,6 +1,6 @@
 # JobTrackr — Job Search Command Center
 
-A full-stack MERN stack application for managing your entire job search lifecycle. JobTrackr lets you track every application from the initial submission through interviews, offers, and follow-ups — all in one professional, dark-themed dashboard. Built as a production-ready project with JWT authentication, real-time stats, Kanban and table views, analytics charts, and interview preparation tooling.
+A full-stack MERN stack application for managing your entire job search lifecycle. JobTrackr lets you track every application from the initial submission through interviews, offers, and follow-ups — all in one professional, dark-themed dashboard. Built as a full-stack MERN application with JWT authentication, real-time stats, Kanban and table views, analytics charts, and interview preparation tooling.
 
 ---
 
@@ -193,7 +193,7 @@ npm run build   # outputs static files to client/build/
 | Variable | Description | Default |
 |---|---|---|
 | `REACT_APP_API_URL` | Backend base URL (no trailing slash, no `/api`) | `http://localhost:5002`* |
-| `PORT` | React dev server port | `3000` |
+| `PORT` | React dev server port | `3001` |
 
 *The hardcoded fallback in `api.js` is `http://localhost:5002`, but `client/.env` takes precedence at runtime. Always set `REACT_APP_API_URL` explicitly to match whichever port your backend is running on — do not rely on the fallback.
 
